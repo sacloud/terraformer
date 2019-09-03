@@ -75,6 +75,7 @@ require (
 	github.com/pquerna/otp v1.0.0 // indirect
 	github.com/prometheus/client_model v0.0.0-20180712105110-5c3871d89910 // indirect
 	github.com/ryanuber/columnize v2.1.0+incompatible // indirect
+	github.com/sacloud/libsacloud/v2 v2.0.0-beta5.0.20190830062749-ac5d04d18bfd
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/satori/uuid v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.2.0 // indirect
