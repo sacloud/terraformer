@@ -1,613 +1,231 @@
 # Terraformer
 
-[![Build Status](https://travis-ci.com/GoogleCloudPlatform/terraformer.svg?branch=master)](https://travis-ci.com/GoogleCloudPlatform/terraformer)
-[![Go Report Card](https://goreportcard.com/badge/github.com/GoogleCloudPlatform/terraformer)](https://goreportcard.com/report/github.com/GoogleCloudPlatform/terraformer)
+このリポジトリは[GoogleCloudPlatform/terraformer](https://github.com/GoogleCloudPlatform/terraformer)のフォークです。  
+オリジナルのTerraformerにさくらのクラウドプロバイダー([sacloud/terraform-provider-sakuracloud](https://github.com/sacloud/terraform-provider-sakuracloud))に対応する機能を追加したものです。
 
-A CLI tool that generates `tf` and `tfstate` files based on existing infrastructure
-(reverse Terraform).
+基本的な利用方法などについてはオリジナルの[README.md](https://github.com/GoogleCloudPlatform/terraformer)を参照してください。
 
-*   Disclaimer: This is not an official Google product
-*   Status: beta - we still need to improve documentation, squash some bugs, etc...
-*   Created by: Waze SRE
+# インストール
 
-![Waze SRE logo](docs/waze-sre-logo.png)
+Dockerを利用する方法と実行ファイルをローカルにダウンロードする方法があります。
 
+## Dockerを利用する場合
 
-# Table of Contents
-- [Capabilities](#capabilities)
-- [Installation](#installation)
-- [Supported providers](/providers)
-    * [Google Cloud](#use-with-gcp)
-    * [AWS](#use-with-aws)
-    * [OpenStack](#use-with-openstack)
-    * [Kubernetes](#use-with-kubernetes)
-    * [Github](#use-with-github)
-    * [Datadog](#use-with-datadog)
-    * [Cloudflare](#use-with-cloudflare)
-    * [Logzio](#use-with-logzio)
-    * [NewRelic](#use-with-newrelic)
-- [Contributing](#contributing)
-- [Developing](#developing)
-- [Infrastructure](#infrastructure)
+Dockerを利用することでTerraform/Terraformer/さくらのクラウドプロバイダーが一式入った環境を手軽に利用できます。
 
-## Capabilities
-
-1.  Generate `tf` + `tfstate` files from existing infrastructure for all
-    supported objects by resource.
-2.  Remote state can be uploaded to a GCS bucket.
-3.  Connect between resources with `terraform_remote_state` (local and bucket).
-4.  Save `tf` files using a custom folder tree pattern.
-5.  Import by resource name and type.
-
-Terraformer uses terraform providers and is designed to easily support newly added resources.
-To upgrade resources with new fields, all you need to do is upgrade the relevant terraform providers.
-```
-Import current State to terraform configuration from google cloud
-
-Usage:
-   import google [flags]
-   import google [command]
-
-Available Commands:
-  list        List supported resources for google provider
-
-Flags:
-  -b, --bucket string         gs://terraform-state
-  -c, --connect                (default true)
-  -f, --filter strings        google_compute_firewall=id1:id2:id4
-  -h, --help                  help for google
-  -o, --path-output string     (default "generated")
-  -p, --path-pattern string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
-      --projects strings
-  -z, --regions strings       europe-west1, (default [global])
-  -r, --resources strings     firewalls,networks
-  -s, --state string          local or bucket (default "local")
-
-Use " import google [command] --help" for more information about a command.
-```
-#### Permissions
-
-Read-only permissions
-
-#### Filtering
-
-Filters are a way to choose which resources `terraformer` imports.
-
-For example:
-```
-terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
-```
-will only import the vpc with id `myvpcid`.
-
-##### Resources ID
-
-Filtering is based on Terraform resource ID patterns. To find valid ID patterns for your resource, check the import part of [Terraform documentation][terraform-providers].
-
-[terraform-providers]: https://www.terraform.io/docs/providers/
-
-#### Planning
-
-The `plan` command generates a planfile that contains all the resources set to be imported. By modifying the planfile before running the `import` command, you can rename or filter the resources you'd like to import.
-
-The rest of subcommands and parameters are identical to the `import` command.
-
-```
-$ terraformer plan google --resources=networks,firewalls --projects=my-project --zone=europe-west1-d
-(snip)
-
-Saving planfile to generated/google/my-project/terraformer/plan.json
+```bash
+$ docker run -it --rm -v $PWD:/work sacloud/terraformer
 ```
 
-After reviewing/customizing the planfile, begin the import by running `import plan`.
+Dockerイメージを自分でビルドする場合は以下のようにします。
 
-```
-$ terraformer import plan generated/google/my-project/terraformer/plan.json
-```
+1.  Run `git clone <terraformer repo>`
+2.  Build docker image by `docker build -t terraformer .`
+3.  Run `docker run -it --rm -v $PWD:/work terraformer`
 
-### Installation
+## 実行ファイルをローカルにダウンロードする場合
+
+### Terraformのインストール
+
+`terraform`コマンドをパスの通った場所に配置します。
+
+### Terraformerのインストール
+
 From source:
+
 1.  Run `git clone <terraformer repo>`
 2.  Run `GO111MODULE=on go mod vendor`
 3.  Run `go build -v`
-4.  Run ```terraform init``` against an ```init.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```init.tf``` should contain:
-```
-provider "google" {}
-```
-Or alternatively
-
-4.  Copy your Terraform provider's plugin(s) to folder
-    `~/.terraform.d/plugins/{darwin,linux}_amd64/`, as appropriate.
 
 From Releases:
 
 * Linux
+
 ```
-curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-linux-amd64
-chmod +x terraformer-linux-amd64
+curl -LO https://github.com/sacloud/terraformer/releases/download/$(curl -s https://api.github.com/repos/sacloud/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-linux-amd64.zip
+unzip terraformer-linux-amd64.zip
+chmod +x terraformer
 sudo mv terraformer-linux-amd64 /usr/local/bin/terraformer
 ```
 * MacOS
+
 ```
-curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-darwin-amd64
-chmod +x terraformer-darwin-amd64
+curl -LO https://github.com/sacloud/terraformer/releases/download/$(curl -s https://api.github.com/repos/sacloud/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-darwin-amd64.zip
+unzip terraformer-darwin-amd64.zip
+chmod +x terraformer
 sudo mv terraformer-darwin-amd64 /usr/local/bin/terraformer
 ```
 
-#### Using a package manager
+* リリース
 
-If you want to use a package manager:
+リリースページから適切なファイルをダウンロードしてください。
 
-- [Homebrew](https://brew.sh/) users can use `brew install terraformer`.
+### プロバイダーのインストール
 
-Links to download terraform providers:
-* google cloud provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
-* aws provider >1.56.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
-* openstack provider >1.17.0 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
-* kubernetes provider >=1.4.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
-* github provider >=2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-github/)
-* datadog provider >1.19.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
-* logzio provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
+以下のフォルダ内にプロバイダーの実行ファイルをコピーしておいてください。
 
-Information on provider plugins:
-https://www.terraform.io/docs/configuration/providers.html
+* `~/.terraform.d/plugins/{darwin,linux}_amd64/`
 
-### Use with GCP
-[![asciicast](https://asciinema.org/a/243961.svg)](https://asciinema.org/a/243961)
-Example:
+Note:  さくらのクラウドプロバイダーはv1.16.4以降のバージョンが推奨です。
+
+## 使い方
+
+コマンドラインオプション、または環境変数でAPIトークン/シークレットを指定する必要があります。
+
+### コマンドラインオプションでAPIキーを指定する場合
 
 ```
-terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --regions=europe-west1,europe-west4 --projects=aaa,fff
-terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=google_compute_firewall=rule1:rule2:rule3 --regions=europe-west1 --projects=aaa,fff
+$ terraformer import sakuracloud --token=APIトークン --secret=APIシークレット --resource=server,disk,icon
 ```
 
-List of supported GCP services:
-
-*   `addresses`
-    * `google_compute_address`
-*   `autoscalers`
-    * `google_compute_autoscaler`
-*   `backendBuckets`
-    * `google_compute_backend_bucket`
-*   `backendServices`
-    * `google_compute_backend_service`
-*   `bigQuery`
-    * `google_bigquery_dataset`
-    * `google_bigquery_table`
-*   `schedulerJobs`
-    * `google_cloud_scheduler_job`
-*   `disks`
-    * `google_compute_disk`
-*   `firewalls`
-    * `google_compute_firewall`
-*   `forwardingRules`
-    * `google_compute_forwarding_rule`
-*   `globalAddresses`
-    * `google_compute_global_address`
-*   `globalForwardingRules`
-    * `google_compute_global_forwarding_rule`
-*   `healthChecks`
-    * `google_compute_health_check`
-*   `httpHealthChecks`
-    * `google_compute_http_health_check`
-*   `httpsHealthChecks`
-    * `google_compute_https_health_check`
-*   `images`
-    * `google_compute_image`
-*   `instanceGroupManagers`
-    * `google_compute_instance_group_manager`
-*   `instanceGroups`
-    * `google_compute_instance_group`
-*   `instanceTemplates`
-    * `google_compute_instance_template`
-*   `instances`
-    * `google_compute_instance`
-*   `interconnectAttachments`
-    * `google_compute_interconnect_attachment`
-*   `memoryStore`
-    * `google_redis_instance`
-*   `networks`
-    * `google_compute_network`
-*   `nodeGroups`
-    * `google_compute_node_group`
-*   `nodeTemplates`
-    * `google_compute_node_template`
-*   `regionAutoscalers`
-    * `google_compute_region_autoscaler`
-*   `regionBackendServices`
-    * `google_compute_region_backend_service`
-*   `regionDisks`
-    * `google_compute_region_disk`
-*   `regionInstanceGroupManagers`
-    * `google_compute_region_instance_group_manager`
-*   `routers`
-    * `google_compute_router`
-*   `routes`
-    * `google_compute_route`
-*   `securityPolicies`
-    * `google_compute_security_policy`
-*   `sslPolicies`
-    * `google_compute_ssl_policy`
-*   `subnetworks`
-    * `google_compute_subnetwork`
-*   `targetHttpProxies`
-    * `google_compute_target_http_proxy`
-*   `targetHttpsProxies`
-    * `google_compute_target_https_proxy`
-*   `targetInstances`
-    * `google_compute_target_instance`
-*   `targetPools`
-    * `google_compute_target_pool`
-*   `targetSslProxies`
-    * `google_compute_target_ssl_proxy`
-*   `targetTcpProxies`
-    * `google_compute_target_tcp_proxy`
-*   `targetVpnGateways`
-    * `google_compute_vpn_gateway`
-*   `urlMaps`
-    * `google_compute_url_map`
-*   `vpnTunnels`
-    * `google_compute_vpn_tunnel`
-*   `gke`
-    * `google_container_cluster`
-    * `google_container_node_pool`
-*   `pubsub`
-    * `google_pubsub_subscription`
-    * `google_pubsub_topic`
-*   `dataProc`
-    * `google_dataproc_cluster`
-*   `cloudFunctions`
-    * `google_cloudfunctions_function`
-*   `gcs`
-    * `google_storage_bucket`
-    * `google_storage_bucket_acl`
-    * `google_storage_default_object_acl`
-    * `google_storage_bucket_iam_binding`
-    * `google_storage_bucket_iam_member`
-    * `google_storage_bucket_iam_policy`
-    * `google_storage_notification`
-*   `monitoring`
-    * `google_monitoring_alert_policy`
-    * `google_monitoring_group`
-    * `google_monitoring_notification_channel`
-    * `google_monitoring_uptime_check_config`
-*   `dns`
-    * `google_dns_managed_zone`
-    * `google_dns_record_set`
-*   `cloudsql`
-    * `google_sql_database_instance`
-    * `google_sql_database`
-*   `kms`
-    * `google_kms_key_ring`
-    * `google_kms_crypto_key`
-*   `project`
-    * `google_project`
-*   `logging`
-    * `google_logging_metric`
-
-Your `tf` and `tfstate` files are written by default to
-`generated/gcp/zone/service`.
-
-### Use with AWS
-
-Example:
+### 環境変数でAPIキーを指定する場合
 
 ```
- terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1 --profile=prod
- terraformer import aws --resources=vpc,subnet --filter=aws_vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
+$ export SAKURACLOUD_ACCESS_TOKEN=APIトークン
+$ export SAKURACLOUD_ACCESS_TOKEN_SECRET=APIシークレット
+$ terraformer import sakuracloud --resource=server,disk,icon
 ```
 
-List of supported AWS services:
-
-*   `elb`
-    * `aws_elb`
-*   `alb`
-    * `aws_lb`
-    * `aws_lb_listener`
-    * `aws_lb_listener_rule`
-    * `aws_lb_listener_certificate`
-    * `aws_lb_target_group`
-    * `aws_lb_target_group_attachment`
-*   `auto_scaling`
-    * `aws_autoscaling_group`
-    * `aws_launch_configuration`
-    * `aws_launch_template`
-*   `rds`
-    * `aws_db_instance`
-    * `aws_db_parameter_group`
-    * `aws_db_subnet_group`
-    * `aws_db_option_group`
-    * `aws_db_event_subscription`
-*   `iam`
-    * `aws_iam_role`
-    * `aws_iam_role_policy`
-    * `aws_iam_user`
-    * `aws_iam_user_group_membership`
-    * `aws_iam_user_policy`
-    * `aws_iam_policy_attachment`
-    * `aws_iam_policy`
-    * `aws_iam_group`
-    * `aws_iam_group_membership`
-    * `aws_iam_group_policy`
-*   `igw`
-    * `aws_internet_gateway`
-*   `nacl`
-    * `aws_network_acl`
-*   `s3`
-    * `aws_s3_bucket`
-    * `aws_s3_bucket_policy`
-*   `sg`
-    * `aws_security_group`
-*   `subnet`
-    * `aws_subnet`
-*   `vpc`
-    * `aws_vpc`
-*   `vpn_connection`
-    * `aws_vpn_connection`
-*   `vpn_gateway`
-    * `aws_vpn_gateway`
-*   `route53`
-    * `aws_route53_zone`
-    * `aws_route53_record`
-*   `acm`
-    * `aws_acm_certificate`
-*   `elasticache`
-    * `aws_elasticache_cluster`
-    * `aws_elasticache_parameter_group`
-    * `aws_elasticache_subnet_group`
-    * `aws_elasticache_replication_group`
-*   `cloudfront`
-    * `aws_cloudfront_distribution`
-*   `ec2_instance`
-    * `aws_instance`
-*   `firehose`
-    * `aws_kinesis_firehose_delivery_stream`
-*   `glue`
-    * `glue_crawler`
-*   `route_table`
-    * `aws_route_table`
-
-### Use with OpenStack
-
-Example:
+利用例:
 
 ```
- terraformer import openstack --resources=compute,networking --regions=RegionOne
+ # サーバのみ、IDを指定
+ ./terraformer import sakuracloud --resources=server --filter=sakuracloud_server=id1:id2:id4
 ```
 
-List of supported OpenStack services:
-
-*   `compute`
-    * `openstack_compute_instance_v2`
-*   `networking`
-    * `openstack_networking_secgroup_v2`
-    * `openstack_networking_secgroup_rule_v2`
-*   `blockstorage`
-    * `openstack_blockstorage_volume_v1`
-    * `openstack_blockstorage_volume_v2`
-    * `openstack_blockstorage_volume_v3`
-
-### Use with Kubernetes
-
-Example:
-
 ```
- terraformer import kubernetes --resources=deployments,services,storageclasses
- terraformer import kubernetes --resources=deployments,services,storageclasses --filter=kubernetes_deployment=name1:name2:name3
+ # 対応している全リソースを指定
+ ./terraformer import sakuracloud --resources=archive,autoBackup,bridge,cdrom,database,disk,dns,gslb,icon,internet,loadBalancer,mobileGateway,nfs,note,packetFilter,privateHost,proxyLB,server,sim,simpleMonitor,sshKey,switch,vpcRouter
 ```
 
-All kubernetes resources that are currently supported by the kubernetes provider, are also supported by this module. Here is the list of resources which are currently supported by kubernetes provider v.1.4:
+### サポートしているリソース
 
-* `clusterrolebinding`
-  * `kubernetes_cluster_role_binding`
-* `configmaps`
-  * `kubernetes_config_map`
-* `deployments`
-  * `kubernetes_deployment`
-* `horizontalpodautoscalers`
-  * `kubernetes_horizontal_pod_autoscaler`
-* `limitranges`
-  * `kubernetes_limit_range`
-* `namespaces`
-  * `kubernetes_namespace`
-* `persistentvolumes`
-  * `kubernetes_persistent_volume`
-* `persistentvolumeclaims`
-  * `kubernetes_persistent_volume_claim`
-* `pods`
-  * `kubernetes_pod`
-* `replicationcontrollers`
-  * `kubernetes_replication_controller`
-* `resourcequotas`
-  * `kubernetes_resource_quota`
-* `secrets`
-  * `kubernetes_secret`
-* `services`
-  * `kubernetes_service`
-* `serviceaccounts`
-  * `kubernetes_service_account`
-* `statefulsets`
-  * `kubernetes_stateful_set`
-* `storageclasses`
-  * `kubernetes_storage_class`
+以下のリソースをサポートしています。
+(この一覧は `terraformer import sakuracloud list`コマンドでも確認できます)
 
-#### Known issues
+* `archive` : `sakuracloud_archive`
+* `autoBackup` : `sakuracloud_auto_backup`
+* `bridge` : `sakuracloud_bridge`
+* `cdrom` : `sakuracloud_cdrom`
+* `database` : `sakuracloud_database`
+* `disk` : `sakuracloud_disk`
+* `dns` : `sakuracloud_dns`
+* `gslb` : `sakuracloud_gslb`
+* `icon` : `sakuracloud_icon`
+* `internet` : `sakuracloud_internet`
+* `loadBalancer` : `sakuracloud_load_balancer`
+* `mobileGateway` : `sakuracloud_mobile_gateway`
+* `nfs` : `sakuracloud_nfs`
+* `note` : `sakuracloud_note`
+* `packetFilter` : `sakuracloud_packet_filter`
+* `privateHost` : `sakuracloud_private_host`
+* `proxyLB` : `sakuracloud_proxylb`
+* `server` : `sakuracloud_server`
+* `sim` : `sakuracloud_sim`
+* `simpleMonitor` : `sakuracloud_simple_monitor`
+* `sshKey` : `sakuracloud_ssh_key`
+* `switch` : `sakuracloud_switch`
+* `vpcRouter` : `sakuracloud_vpc_router`
 
-* Terraform kubernetes provider is rejecting resources with ":" characters in their names (as they don't meet DNS-1123), while it's allowed for certain types in kubernetes, e.g. ClusterRoleBinding.
-* Because terraform flatmap uses "." to detect the keys for unflattening the maps, some keys with "." in their names are being considered as the maps.
-* Since the library assumes empty strings to be empty values (not "0"), there are some issues with optional integer keys that are restricted to be positive.
+## 利用上の注意
 
-### Use with Github
+### Terraformのバージョン
 
-Example:
+Terraform v0.11.12以降が必要です。またTerraform v0.12以降は未サポートです(今後対応予定)。
 
-```
- ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --token=YOUR_TOKEN // or GITHUB_TOKEN in env
- ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --filter=github_repository=id1:id2:id4 --token=YOUR_TOKEN // or GITHUB_TOKEN in env
-```
+Terraform v0.12以降を利用した場合、出力されるtfファイルの一部を手作業で修正する必要があります。  
+(`terraform_remote_state`データソースの部分など)
 
-Supports only organizational resources. List of supported resources:
+### 親子関係のあるリソースのサポート範囲
 
-* `repositories`
-    * `github_repository`
-    * `github_repository_webhook`
-    * `github_branch_protection`
-    * `github_repository_collaborator`
-    * `github_repository_deploy_key`
-* `teams`
-    * `github_team`
-    * `github_team_membership`
-    * `github_team_repository`
-* `members`
-    * `github_membership`
-* `organization_webhooks`
-    * `github_organization_webhook`
+親子関係のあるリソース、例えばDNSゾーン(`sakuracloud_dns`)とDNSレコード(`sakuracloud_dns_record`)などについては親リソース内にインラインで記載する方法のみサポートしています。  
 
-Notes:
-* Terraformer can't get webhook secrets from the github API. If you use a secret token in any of your webhooks, running `terraform plan` will result in a change being detected:
-=> `configuration.#: "1" => "0"` in tfstate only.
+### サポートしない項目
 
-### Use with Datadog
+サーバリソース(`sakuracloud_server`)のディスクの修正関連パラメータなどの入力専用項目はtfファイル/tfstateファイルに出力されませんのでご注意ください。  
+出力されない項目は以下のようなものがあります。  
+これらは必要に応じてtfファイルの書き換えを行ってください。
 
-Example:
+#### アーカイブ(`sakuracloud_archive`)
 
-```
- ./terraformer import datadog --resources=monitor --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
- ./terraformer import datadog --resources=monitor --filter=datadog_monitor=id1:id2:id4 --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
-```
+- `archive_file`: アップロードするアーカイブファイル
+- `hash`: アーカイブファイルのハッシュ値
 
-List of supported Datadog services:
+#### ISOイメージ(`sakuracloud_cdrom`)
 
-* `downtime`
-    * `datadog_downtime`
-* `monitor`
-    * `datadog_monitor`
-* `screenboard`
-    * `datadog_screenboard`
-* `synthetics`
-    * `datadog_synthetics_test`
-* `timeboard`
-    * `datadog_timeboard`
-* `user`
-    * `datadog_user`
+- `iso_image_file`: ISOイメージファイル
+- `content`: ISOイメージファイルのコンテンツ
+- `content_file_name`: ISOイメージファイルのファイルパス
+- `hash`: ハッシュ値
 
+#### アイコン(`sakuracloud_icon`)
 
-### Use with Cloudflare
+- `source`: アイコンのファイルパス
+- `base64content`: アイコンファイルのコンテンツ
 
-Example:
-```
-CLOUDFLARE_TOKEN=[CLOUDFLARE_API_TOKEN]
-CLOUDFLARE_EMAIL=[CLOUDFLARE_EMAIL]
- ./terraformer import cloudflare --resources=firewall,dns
+#### サーバ(`sakuracloud_server`)
+
+- `hostname`: ホスト名
+- `password`: パスワード
+- `disable_pw_auth`: パスワード認証の無効化
+- `ssh_key_ids`: SSH公開鍵のID
+- `note_ids`: スタートアップスクリプトのID
+
+### パブリックリソースのtfファイル間の参照出力
+
+パブリックリソース(`Scope=Shared`)はtfファイルにIDのみ出力され、`${data.terraform_remote_state.xxx}`という参照は出力されません。
+
+対象となるパブリックリソース:
+
+- アーカイブ
+- ISOイメージ
+- アイコン
+- スタートアップスクリプト
+
+これらは必要に応じて以下のようにtfファイルの書き換えを行ってください。
+
+```hcl
+# 書き換え前: パブリックアーカイブの場合アーカイブのIDがtfファイルに出力される
+resource "sakuracloud_disk" "disk-001-example" {
+  name                      = "example"
+  source_archive_id         = "123456789012" // パブリックアーカイブの場合、${}での参照とならない
+}
 ```
 
-List of supported Cloudflare services:
+```hcl
+# 書き換え後: IDをデータソース経由などでの参照に書き換える
+data "sakuracloud_archive" "ubuntu" {
+  os_type = "ubuntu"
+}
 
-* `firewall`
-  * `cloudflare_access_rule`
-  * `cloudflare_filter`
-  * `cloudflare_firewall_rule`
-  * `cloudflare_zone_lockdown`
-* `dns`
-  * `cloudflare_zone`
-  * `cloudflare_record`
-* `access`
-  * `cloudflare_access_application`
-
-
-### Use with Logz.io
-
-Example:
-
-```
- LOGZIO_API_TOKEN=foobar LOGZIO_BASE_URL=https://api-eu.logz.io ./terraformer import logzio -r=alerts,alert_notification_endpoints // Import Logz.io alerts and alert notification endpoints
+resource "sakuracloud_disk" "disk-001-example" {
+  name                      = "example"
+  source_archive_id         = "${data.sakuracloud_archive.ubuntu.id}" // データソースを参照するように書き換え
+}
 ```
 
-List of supported Logz.io resources:
+### tfファイル上で参照出力されずIDが出力される場合
 
-* `alerts`
-    * `logzio_alert`
-* `alert notification endpoints`
-    * `logzio_endpoint`
-
-### Use with NewRelic
-Example:
+`terraformer import`実行時の対象リソースの設定で参照元/参照先両方のリソースを指定する必要があります。  
+例えばサーバリソース(`sakuracloud_server`)の`icon_id`を参照にしたい場合は以下のようにサーバとアイコンの両方をオプションで指定してください。
 
 ```
-NEWRELIC_API_KEY=[API-KEY]
-./terraformer import newrelic -r alert,dashboard,infra,synthetics
+terraformer import sakuracloud -r server,icon
 ```
 
-List of supported NewRelic resources:
+## バージョニングについて
 
-* `alert`
-    * `newrelic_alert_channel`
-    * `newrelic_alert_condition`
-    * `newrelic_alert_policy`
-* `dashboard`
-    * `newrelic_dashboard`
-* `infra`
-    * `newrelic_infra_alert_condition`
-* `synthetics`
-    * `newrelic_synthetics_monitor`
-    * `newrelic_synthetics_alert_condition`
+オリジナルのTerraformerのリリースタグごとに対応したsacloud/terraformerをリリースします。
 
-## Contributing
+sacloud/terraformでのリリースタグは以下のようなルールで付与します。
 
-If you have improvements or fixes, we would love to have your contributions.
-Please read CONTRIBUTING.md for more information on the process we would like
-contributors to follow.
+    sacloud/<オリジナルのタグ>/patch-<リリースごとの連番>
 
-## Developing
-Terraformer was built so you can easily add new providers of any kind.
+例えば、オリジナルのリリースタグが `v0.7.9`の場合、対応するリリースタグは `sacloud/v0.7.9/patch-1`となります。
 
-Process for generating `tf` + `tfstate` files:
+## License
 
-1.  Call GCP/AWS/other api and get list of resources.
-2.  Iterate over resources and take only the ID (we don't need mapping fields!)
-3.  Call to provider for readonly fields.
-4.  Call to infrastructure and take tf + tfstate.
+ `sacloud/terraformer` Copyright 2019 Kazumichi Yamamoto.
 
-## Infrastructure
-
-1.  Call to provider using the refresh method and get all data.
-2.  Convert refresh data to go struct.
-3.  Generate HCL file - `tf` files.
-4.  Generate `tfstate` files.
-
-All mapping of resource is made by providers and Terraform. Upgrades are needed only
-for providers.
-
-##### GCP compute resources
-
-For GCP compute resources, use generated code from
-`providers/gcp/gcp_compute_code_generator`.
-
-To regenerate code:
-
-```
-go run providers/gcp/gcp_compute_code_generator/*.go
-```
-
-### Similar projects
-
-
-#### [terraforming](https://github.com/dtan4/terraforming)
-
-##### Terraformer Benefits
-
-* Simpler to add new providers and resources - already supports AWS, GCP, Github, Kubernetes, and Openstack. Terraforming supports only AWS.
-* Better support for HCL + tfstate, including updates for Terraform 0.12
-* If a provider adds new attributes to a resource, there is no need change Terraformer code - just update the terraform provider on your laptop.
-* Automatically supports connections between resources in HCL files
-
-##### Comparison
-
-Terraforming gets all attributes from cloud APIs and creates HCL and tfstate files with templating. Each attribute in the API needs to map to attribute in terraform. Generated files from templating can be broken with illegal syntax. When a provider adds new attributes the terraforming code needs to be updated.
-
-Terraformer instead uses terraform provider files for mapping attributes, HCL library from hashicorp, and terraform code.
-
-Look for S3 support in Terraforming here and official s3 support
-Terraforming lacks full coverage for resources - as an example you can see that 70% of s3 options are not supported:
-
-* terraforming - https://github.com/dtan4/terraforming/blob/master/lib/terraforming/template/tf/s3.erb
-* official s3 support - https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
+  This project is published under [Apache 2.0 License](LICENSE).
+  
