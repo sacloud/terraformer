@@ -217,8 +217,15 @@ github.com/dollarshaveclub/new-relic-synthetics-go/util
 github.com/dylanmei/iso8601
 # github.com/fatih/color v1.7.0
 github.com/fatih/color
+# github.com/fatih/structs v1.1.0
+github.com/fatih/structs
 # github.com/ghodss/yaml v1.0.0
 github.com/ghodss/yaml
+# github.com/go-playground/locales v0.12.1
+github.com/go-playground/locales
+github.com/go-playground/locales/currency
+# github.com/go-playground/universal-translator v0.16.0
+github.com/go-playground/universal-translator
 # github.com/gogo/protobuf v1.1.1
 github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/sortkeys
@@ -365,7 +372,7 @@ github.com/hashicorp/go-getter
 github.com/hashicorp/go-getter/helper/url
 # github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f
 github.com/hashicorp/go-hclog
-# github.com/hashicorp/go-multierror v1.0.0
+# github.com/hashicorp/go-multierror v1.0.1-0.20190722213833-bdca7bb83f60
 github.com/hashicorp/go-multierror
 # github.com/hashicorp/go-plugin v0.0.0-20181030172320-54b6ff97d818
 github.com/hashicorp/go-plugin
@@ -493,7 +500,7 @@ github.com/hashicorp/yamux
 github.com/howeyc/gopass
 # github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
 github.com/iancoleman/strcase
-# github.com/imdario/mergo v0.3.7
+# github.com/imdario/mergo v0.3.8-0.20190722133502-4c317f2286be
 github.com/imdario/mergo
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
@@ -530,6 +537,8 @@ github.com/keybase/go-crypto/ed25519
 github.com/keybase/go-crypto/openpgp/ecdh
 github.com/keybase/go-crypto/openpgp/elgamal
 github.com/keybase/go-crypto/ed25519/internal/edwards25519
+# github.com/leodido/go-urn v1.1.0
+github.com/leodido/go-urn
 # github.com/lusis/go-artifactory v0.0.0-20180304164534-a47f63f234b2
 github.com/lusis/go-artifactory/src/artifactory.v401
 # github.com/masterzen/simplexml v0.0.0-20160608183007-4572e39b1ab9
@@ -587,6 +596,17 @@ github.com/posener/complete/cmd
 github.com/posener/complete/match
 # github.com/ryanuber/columnize v2.1.0+incompatible
 github.com/ryanuber/columnize
+# github.com/sacloud/libsacloud/v2 v2.0.0-beta5.0.20190830062749-ac5d04d18bfd
+github.com/sacloud/libsacloud/v2/sacloud
+github.com/sacloud/libsacloud/v2/sacloud/accessor
+github.com/sacloud/libsacloud/v2/sacloud/search
+github.com/sacloud/libsacloud/v2/sacloud/search/keys
+github.com/sacloud/libsacloud/v2/sacloud/trace
+github.com/sacloud/libsacloud/v2/sacloud/types
+github.com/sacloud/libsacloud/v2
+github.com/sacloud/libsacloud/v2/pkg/mapconv
+github.com/sacloud/libsacloud/v2/sacloud/naked
+github.com/sacloud/libsacloud/v2/pkg/cidr
 # github.com/satori/uuid v1.2.0
 github.com/satori/uuid
 # github.com/spf13/cobra v0.0.3
@@ -642,7 +662,10 @@ go.opencensus.io/internal/tagencoding
 go.opencensus.io/metric/metricproducer
 go.opencensus.io
 go.opencensus.io/resource
-# golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
+# go.uber.org/ratelimit v0.0.0-20180316092928-c15da0234277
+go.uber.org/ratelimit
+go.uber.org/ratelimit/internal/clock
+# golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/openpgp
 golang.org/x/crypto/blowfish
@@ -663,7 +686,7 @@ golang.org/x/crypto/poly1305
 golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/subtle
 golang.org/x/crypto/md4
-# golang.org/x/net v0.0.0-20190311183353-d8887717615a
+# golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3
 golang.org/x/net/context
 golang.org/x/net/trace
 golang.org/x/net/context/ctxhttp
@@ -684,7 +707,7 @@ golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
 # golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6
 golang.org/x/sync/semaphore
-# golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a
+# golang.org/x/sys v0.0.0-20190412213103-97732733099d
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 golang.org/x/sys/cpu
@@ -799,6 +822,8 @@ google.golang.org/grpc/credentials/oauth
 google.golang.org/grpc/balancer/base
 google.golang.org/grpc/binarylog/grpc_binarylog_v1
 google.golang.org/grpc/internal/syscall
+# gopkg.in/go-playground/validator.v9 v9.29.0
+gopkg.in/go-playground/validator.v9
 # gopkg.in/inf.v0 v0.9.1
 gopkg.in/inf.v0
 # gopkg.in/resty.v0 v0.4.1

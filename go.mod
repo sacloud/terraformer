@@ -47,7 +47,6 @@ require (
 	github.com/hashicorp/vault v0.11.5 // indirect
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
-	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jen20/awspolicyequivalence v1.0.0 // indirect
 	github.com/jonboydell/logzio_client v0.0.0-20190726085421-c93d6b149c1e
@@ -62,7 +61,6 @@ require (
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
 	github.com/mitchellh/hashstructure v1.0.0 // indirect
-	github.com/mitchellh/mapstructure v1.1.2 // indirect
 	github.com/mitchellh/panicwrap v0.0.0-20170106182340-fce601fe5557 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
@@ -75,6 +73,7 @@ require (
 	github.com/pquerna/otp v1.0.0 // indirect
 	github.com/prometheus/client_model v0.0.0-20180712105110-5c3871d89910 // indirect
 	github.com/ryanuber/columnize v2.1.0+incompatible // indirect
+	github.com/sacloud/libsacloud/v2 v2.0.0-beta5.0.20190830062749-ac5d04d18bfd
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/satori/uuid v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.2.0 // indirect
