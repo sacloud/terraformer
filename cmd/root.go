@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//
+// Modifications Copyright 2019 Kazumichi Yamamoto
+//
+
 package cmd
 
 import (
@@ -47,6 +51,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdCloudflareImporter,
 		newCmdLogzioImporter,
 		newCmdNewRelicImporter,
+		newCmdSakuraCloudImporter,
 	}
 }
 
@@ -61,6 +66,7 @@ func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 		newDataDogProvider,
 		newLogzioProvider,
 		newNewRelicProvider,
+		newSakuraCloudProvider,
 	} {
 		list[providerGen().GetName()] = providerGen
 	}
