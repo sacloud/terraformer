@@ -116,6 +116,7 @@ $ terraformer import sakuracloud --resource=server,disk,icon
 * `archive` : `sakuracloud_archive`
 * `autoBackup` : `sakuracloud_auto_backup`
 * `bridge` : `sakuracloud_bridge`
+* `containerRegistry`: `sakuracloud_container_registry`
 * `cdrom` : `sakuracloud_cdrom`
 * `database` : `sakuracloud_database`
 * `disk` : `sakuracloud_disk`
@@ -124,6 +125,7 @@ $ terraformer import sakuracloud --resource=server,disk,icon
 * `icon` : `sakuracloud_icon`
 * `internet` : `sakuracloud_internet`
 * `loadBalancer` : `sakuracloud_load_balancer`
+* `localRouter` : `sakuracloud_local_router`
 * `mobileGateway` : `sakuracloud_mobile_gateway`
 * `nfs` : `sakuracloud_nfs`
 * `note` : `sakuracloud_note`
