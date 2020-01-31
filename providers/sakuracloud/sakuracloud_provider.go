@@ -150,7 +150,7 @@ func (p *SakuraCloudProvider) GetName() string {
 	return "sakuracloud"
 }
 
-func (p *SakuraCloudProvider) InitService(serviceName string) error {
+func (p *SakuraCloudProvider) InitService(serviceName string, _ bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New(p.GetName() + ": " + serviceName + " not supported service")
@@ -168,28 +168,30 @@ func (p *SakuraCloudProvider) InitService(serviceName string) error {
 // GetSupportedService return map of support service for SakuraCloud
 func (p *SakuraCloudProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
-		"archive":       &ArchiveGenerator{},
-		"autoBackup":    &AutoBackupGenerator{},
-		"bridge":        &BridgeGenerator{},
-		"cdrom":         &CDROMGenerator{},
-		"database":      &DatabaseGenerator{},
-		"disk":          &DiskGenerator{},
-		"dns":           &DNSGenerator{},
-		"gslb":          &GSLBGenerator{},
-		"icon":          &IconGenerator{},
-		"internet":      &InternetGenerator{},
-		"loadBalancer":  &LoadBalancerGenerator{},
-		"mobileGateway": &MobileGatewayGenerator{},
-		"nfs":           &NFSGenerator{},
-		"note":          &NoteGenerator{},
-		"packetFilter":  &PacketFilterGenerator{},
-		"privateHost":   &PrivateHostGenerator{},
-		"proxyLB":       &ProxyLBGenerator{},
-		"server":        &ServerGenerator{},
-		"sim":           &SIMGenerator{},
-		"simpleMonitor": &SimpleMonitorGenerator{},
-		"sshKey":        &SSHKeyGenerator{},
-		"switch":        &SwitchGenerator{},
-		"vpcRouter":     &VPCRouterGenerator{},
+		"archive":           &ArchiveGenerator{},
+		"autoBackup":        &AutoBackupGenerator{},
+		"bridge":            &BridgeGenerator{},
+		"containerRegistry": &ContainerRegistryGenerator{},
+		"cdrom":             &CDROMGenerator{},
+		"database":          &DatabaseGenerator{},
+		"disk":              &DiskGenerator{},
+		"dns":               &DNSGenerator{},
+		"gslb":              &GSLBGenerator{},
+		"icon":              &IconGenerator{},
+		"internet":          &InternetGenerator{},
+		"loadBalancer":      &LoadBalancerGenerator{},
+		"localRouter":       &LocalRouterGenerator{},
+		"mobileGateway":     &MobileGatewayGenerator{},
+		"nfs":               &NFSGenerator{},
+		"note":              &NoteGenerator{},
+		"packetFilter":      &PacketFilterGenerator{},
+		"privateHost":       &PrivateHostGenerator{},
+		"proxyLB":           &ProxyLBGenerator{},
+		"server":            &ServerGenerator{},
+		"sim":               &SIMGenerator{},
+		"simpleMonitor":     &SimpleMonitorGenerator{},
+		"sshKey":            &SSHKeyGenerator{},
+		"switch":            &SwitchGenerator{},
+		"vpcRouter":         &VPCRouterGenerator{},
 	}
 }

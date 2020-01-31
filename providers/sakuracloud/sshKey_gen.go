@@ -64,10 +64,7 @@ func (g *SSHKeyGenerator) InitResources() error {
 	ctx := context.Background()
 	op := sacloud.NewSSHKeyOp(caller)
 
-	searched, err := op.Find(ctx, &sacloud.FindCondition{
-
-		Count: 10000,
-	})
+	searched, err := op.Find(ctx, &sacloud.FindCondition{})
 	if err != nil {
 		return err
 	}

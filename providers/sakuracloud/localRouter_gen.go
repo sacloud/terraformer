@@ -24,16 +24,16 @@ import (
 	"github.com/sacloud/libsacloud/v2/sacloud"
 )
 
-var loadBalancerAllowEmptyValues = []string{""}
+var localRouterAllowEmptyValues = []string{""}
 
-var loadBalancerAdditionalFields = map[string]interface{}{}
+var localRouterAdditionalFields = map[string]interface{}{}
 
-type LoadBalancerGenerator struct {
+type LocalRouterGenerator struct {
 	SakuraCloudService
 }
 
 // Create for each TerraformResource
-func (g LoadBalancerGenerator) createResources(searched []interface{}) []terraform_utils.Resource {
+func (g LocalRouterGenerator) createResources(searched []interface{}) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for i, resource := range searched {
 		obj := resource.(*sacloudResource)
@@ -41,15 +41,15 @@ func (g LoadBalancerGenerator) createResources(searched []interface{}) []terrafo
 			continue
 		}
 		resourceID := obj.id()
-		resourceName := fmt.Sprintf("%s-%03d-%s", "loadBalancer", i, obj.name())
+		resourceName := fmt.Sprintf("%s-%03d-%s", "localRouter", i, obj.name())
 		resources = append(resources, terraform_utils.NewResource(
 			resourceID,
 			resourceName,
-			"sakuracloud_load_balancer",
+			"sakuracloud_local_router",
 			"sakuracloud",
 			obj.attributes(),
-			loadBalancerAllowEmptyValues,
-			loadBalancerAdditionalFields,
+			localRouterAllowEmptyValues,
+			localRouterAdditionalFields,
 		))
 	}
 
@@ -57,29 +57,23 @@ func (g LoadBalancerGenerator) createResources(searched []interface{}) []terrafo
 }
 
 // Generate TerraformResources from SakuraCloud API,
-// from each loadBalancer create 1 TerraformResource
-// Need loadBalancer name as ID for terraform resource
-func (g *LoadBalancerGenerator) InitResources() error {
+// from each localRouter create 1 TerraformResource
+// Need localRouter name as ID for terraform resource
+func (g *LocalRouterGenerator) InitResources() error {
 	caller := g.NewClient()
 	ctx := context.Background()
-	op := sacloud.NewLoadBalancerOp(caller)
+	op := sacloud.NewLocalRouterOp(caller)
 
-	resources, err := findResourcePerZone(ctx, func(ctx context.Context, zone string) ([]interface{}, error) {
-		searched, err := op.Find(ctx, zone, &sacloud.FindCondition{})
-		if err != nil {
-			return nil, err
-		}
-		var res []interface{}
-		for _, v := range searched.LoadBalancers {
-			res = append(res, &sacloudResource{
-				resource: v,
-				zone:     zone,
-			})
-		}
-		return res, nil
-	})
+	searched, err := op.Find(ctx, &sacloud.FindCondition{})
 	if err != nil {
 		return err
+	}
+	var resources []interface{}
+	for _, v := range searched.LocalRouters {
+		resources = append(resources, &sacloudResource{
+			resource: v,
+			isGlobal: true,
+		})
 	}
 	g.Resources = g.createResources(resources)
 

@@ -65,10 +65,7 @@ func (g *InternetGenerator) InitResources() error {
 	op := sacloud.NewInternetOp(caller)
 
 	resources, err := findResourcePerZone(ctx, func(ctx context.Context, zone string) ([]interface{}, error) {
-		searched, err := op.Find(ctx, zone, &sacloud.FindCondition{
-
-			Count: 10000,
-		})
+		searched, err := op.Find(ctx, zone, &sacloud.FindCondition{})
 		if err != nil {
 			return nil, err
 		}

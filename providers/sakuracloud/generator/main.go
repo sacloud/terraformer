@@ -105,7 +105,6 @@ func (g *{{.titleResourceName}}Generator) InitResources() error {
 		Filter: search.Filter{
 			search.Key(keys.Scope): search.AndEqual(string(types.Scopes.User)),
 		},{{ end }}
-		Count: 10000,
 	})
 	if err != nil {
 		return err
@@ -125,7 +124,6 @@ func (g *{{.titleResourceName}}Generator) InitResources() error {
 			Filter: search.Filter{
 				search.Key(keys.Scope): search.AndEqual(string(types.Scopes.User)),
 			},{{ end }}
-			Count: 10000,
 		})
 		if err != nil {
 			return nil, err

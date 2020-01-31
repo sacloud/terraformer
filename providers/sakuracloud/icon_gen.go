@@ -73,7 +73,6 @@ func (g *IconGenerator) InitResources() error {
 		Filter: search.Filter{
 			search.Key(keys.Scope): search.AndEqual(string(types.Scopes.User)),
 		},
-		Count: 10000,
 	})
 	if err != nil {
 		return err

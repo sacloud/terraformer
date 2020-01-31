@@ -22,15 +22,9 @@ func newCmdSakuraCloudImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newSakuraCloudProvider()))
-	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
-	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "servers,disks")
-	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
-	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
-	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
-	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "server,disk", "sakuracloud_server=id1:id2:id4")
 	cmd.PersistentFlags().StringVarP(&apiKey, "token", "", "", "YOUR_SAKURACLOUD_TOKEN or env param SAKURACLOUD_ACCESS_TOKEN")
 	cmd.PersistentFlags().StringVarP(&appKey, "secret", "", "", "YOUR_SAKURACLOUD_SECRET or env param SAKURACLOUD_ACCESS_TOKEN_SECRET")
-	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "sakuracloud_server=id1:id2:id4")
 	return cmd
 }
 

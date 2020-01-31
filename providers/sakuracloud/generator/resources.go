@@ -37,6 +37,11 @@ var terraformResources = map[string]sakuraCloudResourceRenderable{
 		pluralResourceName: "CDROMs",
 		useScopeFilter:     true,
 	},
+	"containerRegistry": sakuraCloudResource{
+		terraformName:      "sakuracloud_container_registry",
+		pluralResourceName: "ContainerRegistries",
+		globalZone:         true,
+	},
 	"database": sakuraCloudResource{
 		terraformName:      "sakuracloud_database",
 		pluralResourceName: "Databases",
@@ -68,6 +73,11 @@ var terraformResources = map[string]sakuraCloudResourceRenderable{
 	"loadBalancer": sakuraCloudResource{
 		terraformName:      "sakuracloud_load_balancer",
 		pluralResourceName: "LoadBalancers",
+	},
+	"localRouter": sakuraCloudResource{
+		terraformName:      "sakuracloud_local_router",
+		pluralResourceName: "LocalRouters",
+		globalZone:         true,
 	},
 	"mobileGateway": sakuraCloudResource{
 		terraformName:      "sakuracloud_mobile_gateway",

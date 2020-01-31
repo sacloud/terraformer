@@ -45,14 +45,14 @@ func (s SakuraCloudService) NewClient() sacloud.APICaller {
 			Transport: &sacloud.RateLimitRoundTripper{RateLimitPerSec: DefaultAPIRequestRateLimit},
 		}
 		caller := &sacloud.Client{
-			AccessToken:            s.Args["token"].(string),
-			AccessTokenSecret:      s.Args["secret"].(string),
-			DefaultTimeoutDuration: sacloud.APIDefaultTimeoutDuration,
-			UserAgent:              "terraformer/v0.7.8 (sacloud version)",
-			AcceptLanguage:         sacloud.APIDefaultAcceptLanguage,
-			RetryMax:               sacloud.APIDefaultRetryMax,
-			RetryInterval:          sacloud.APIDefaultRetryInterval,
-			HTTPClient:             httpClient,
+			AccessToken:       s.Args["token"].(string),
+			AccessTokenSecret: s.Args["secret"].(string),
+			UserAgent:         "terraformer/v0.7.8 (sacloud version)",
+			AcceptLanguage:    sacloud.APIDefaultAcceptLanguage,
+			RetryMax:          sacloud.APIDefaultRetryMax,
+			RetryWaitMax:      sacloud.APIDefaultRetryWaitMax,
+			RetryWaitMin:      sacloud.APIDefaultRetryWaitMin,
+			HTTPClient:        httpClient,
 		}
 
 		if traceMode := os.Getenv("SAKURACLOUD_TRACE"); traceMode != "" {

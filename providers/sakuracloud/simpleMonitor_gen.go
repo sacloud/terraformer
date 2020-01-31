@@ -64,10 +64,7 @@ func (g *SimpleMonitorGenerator) InitResources() error {
 	ctx := context.Background()
 	op := sacloud.NewSimpleMonitorOp(caller)
 
-	searched, err := op.Find(ctx, &sacloud.FindCondition{
-
-		Count: 10000,
-	})
+	searched, err := op.Find(ctx, &sacloud.FindCondition{})
 	if err != nil {
 		return err
 	}

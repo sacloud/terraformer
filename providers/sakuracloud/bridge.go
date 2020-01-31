@@ -63,9 +63,7 @@ func (g *BridgeGenerator) InitResources() error {
 	op := sacloud.NewBridgeOp(caller)
 
 	// bridgeのみどのゾーンでリクエストしても同一リソースが返る
-	searched, err := op.Find(ctx, sacloud.APIDefaultZone, &sacloud.FindCondition{
-		Count: 10000,
-	})
+	searched, err := op.Find(ctx, sacloud.APIDefaultZone, &sacloud.FindCondition{})
 	if err != nil {
 		return err
 	}
